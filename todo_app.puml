@@ -1,0 +1,145 @@
+@startuml ToDo_Application_Architecture
+skinparam classAttributeIconSize 0
+
+title ToDo Application
+
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+class Task {
+  - id: String
+  - title: String
+  - description: String
+  - priority: Priority
+  - dueDate: LocalDate
+  - status: TaskStatus
+  - createdDate: LocalDate
+  --
+  + Task(title, description, priority, dueDate)
+  + getId(): String
+  + getTitle(): String
+  + setTitle(title: String): void
+  + getDescription(): String
+  + setDescription(description: String): void
+  + getPriority(): Priority
+  + setPriority(priority: Priority): void
+  + getDueDate(): LocalDate
+  + setDueDate(dueDate: LocalDate): void
+  + getStatus(): TaskStatus
+  + setStatus(status: TaskStatus): void
+  + toString(): String
+  
+}
+
+Task *-- Priority
+Task *-- TaskStatus
+
+
+interface ITaskRepository <<interface>> {
+  + add(task: Task): void
+  + remove(id: String): boolean
+  + update(task: Task): boolean
+  + findById(id: String): Task
+  + getAll(): List<Task>
+}
+
+class TaskRepository {
+  - tasks: Map<String, Task>
+  --
+  + TaskRepository()
+  + add(task: Task): void
+  + remove(id: String): boolean
+  + update(task: Task): boolean
+  + findById(id: String): Task
+  + getAll(): List<Task>
+}
+
+ITaskRepository <|.. TaskRepository
+
+
+
+interface ITaskFilter <<interface>> {
+  + filter(tasks: List<Task>): List<Task>
+}
+
+class PriorityFilter {
+  - priority: Priority
+  --
+  + PriorityFilter(priority: Priority)
+  + filter(tasks: List<Task>): List<Task>
+}
+
+class StatusFilter {
+  - status: TaskStatus
+  --
+  + StatusFilter(status: TaskStatus)
+  + filter(tasks: List<Task>): List<Task>
+}
+
+ITaskFilter <|.. PriorityFilter : implements
+ITaskFilter <|.. StatusFilter : implements
+
+class TaskService {
+  - repository: ITaskRepository
+  --
+  + TaskService(repository: ITaskRepository)
+  + createTask(title, desc, priority, dueDate): Task
+  + deleteTask(id: String): boolean
+  + updateTask(task: Task): boolean
+  + getTask(id: String): Task
+  + getAllTasks(): List<Task>
+  + filterByStatus(status: TaskStatus): List<Task>
+  + filterByPriority(priority: Priority): List<Task>
+  + applyFilter(filter: ITaskFilter): List<Task>
+  + getStatistics(): String
+}
+
+TaskService --> ITaskRepository
+TaskService --> Task
+
+
+
+class TodoApp {
+  - service: TaskService
+  - scanner: Scanner
+  - running: boolean
+  --
+  + TodoApp(service: TaskService)
+  + start(): void
+  - showMenu(): void
+  - handleAddTask(): void
+  - handleViewTasks(): void
+  - handleUpdateTask(): void
+  - handleDeleteTask(): void
+  - handleSearchTasks(): void
+  - handleFilterTasks(): void
+  - handleStatistics(): void
+  - displayTask(task: Task): void
+  - displayTasks(tasks: List<Task>): void
+}
+
+TodoApp --> TaskService
+
+
+class Main {
+  + {static} main(args: String[]): void
+}
+
+Main --> TaskRepository : creates
+Main --> TaskService : creates
+Main --> TodoApp : creates
+
+
+@enduml
