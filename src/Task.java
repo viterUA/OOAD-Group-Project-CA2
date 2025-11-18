@@ -12,6 +12,19 @@ public class Task {
     private LocalDate createdDate;
 
     public Task(String title, String description, Priority priority, LocalDate dueDate) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+        if (description == null) {
+            throw new IllegalArgumentException("Description cannot be null");
+        }
+        if (priority == null) {
+            throw new IllegalArgumentException("Priority cannot be null");
+        }
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+
         this.id = UUID.randomUUID().toString();
         this.title = title;
         this.description = description;
@@ -30,6 +43,9 @@ public class Task {
     }
 
     public void setTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
         this.title = title;
     }
 
@@ -38,6 +54,9 @@ public class Task {
     }
 
     public void setDescription(String description) {
+        if (description == null) {
+            throw new IllegalArgumentException("Description cannot be null");
+        }
         this.description = description;
     }
 
@@ -46,6 +65,9 @@ public class Task {
     }
 
     public void setPriority(Priority priority) {
+        if (priority == null) {
+            throw new IllegalArgumentException("Priority cannot be null");
+        }
         this.priority = priority;
     }
 
@@ -54,6 +76,9 @@ public class Task {
     }
 
     public void setDueDate(LocalDate dueDate) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
         this.dueDate = dueDate;
     }
 
@@ -62,6 +87,9 @@ public class Task {
     }
 
     public void setStatus(TaskStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null");
+        }
         this.status = status;
     }
 
