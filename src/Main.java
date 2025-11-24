@@ -7,6 +7,9 @@ public class Main {
         ITaskRepository repository = new TaskRepository();
         TaskService taskService = new TaskService(repository);
 
+        TodoApp app = new TodoApp(taskService);
+        app.start();
+
         Task task1 = taskService.createTask(
                 "assignment",
                 "Finish the task management system",
