@@ -22,19 +22,23 @@ public class Main {
         );
 
         List<Task> allTasks = taskService.getAllTasks();
+        System.out.println("All priority tasks:");
         for (int i = 0; i < allTasks.size(); i++) {
-            System.out.println("\nAll: " + allTasks.get(i));
+            System.out.println(allTasks.get(i));
         }
 
         List<Task> highPriorityTasks = taskService.filterByPriority(Priority.HIGH);
+        System.out.println("====================================");
+        System.out.println("\nHigh priority tasks:");
         for (int i = 0; i < highPriorityTasks.size(); i++) {
-            System.out.println("\nHigh: " + highPriorityTasks.get(i));
+            System.out.println(highPriorityTasks.get(i));
         }
-        System.out.println();
 
         List<Task> lowPriorityTasks = taskService.filterByPriority(Priority.LOW);
+        System.out.println("====================================");
+        System.out.println("\nLow priority tasks:");
         for (int i = 0; i < lowPriorityTasks.size(); i++) {
-            System.out.println("\nLow: " + lowPriorityTasks.get(i));
+            System.out.println(lowPriorityTasks.get(i));
         }
     }
 }
