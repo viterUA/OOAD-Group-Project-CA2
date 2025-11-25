@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.*;
 
 
 
@@ -16,23 +17,20 @@ public class TaskRepository implements ITaskRepository {
     public void add(Task task) {
         tasks.put(task.getId(), task);
     }
-    
-    public boolean remove(String id) {
+
+    public boolean update(Task updatedTask) {
+        String id = updatedTask.getId();
         if (tasks.containsKey(id)) {
-            tasks.remove(id);
+            tasks.put(id, updatedTask);
             return true;
         }
         return false;
     }
-    
-    public boolean update(Task task) {
-        if (tasks.containsKey(task.getId())) {
-            tasks.put(task.getId(), task);
-            return true;
-        }
-        return false;
+
+    public boolean remove(String id) {
+        return tasks.remove(id) != null;
     }
-    
+
     public Task findById(String id) {
         return tasks.get(id);
     }

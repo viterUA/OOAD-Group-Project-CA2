@@ -19,11 +19,30 @@ public class TaskService {
     public boolean deleteTask(String id) {
         return repository.remove(id);
     }
-    
-    public boolean updateTask(Task task) {
-        return repository.update(task);
+
+    public boolean updateTask(
+            String id,
+            String title,
+            String description,
+            Priority priority,
+            LocalDate dueDate,
+            TaskStatus status
+    ) {
+        Task existing = repository.findById(id);
+        if (existing == null) {
+            return false;
+        }
+
+        if (title != null) existing.setTitle(title);
+        if (description != null) existing.setDescription(description);
+        if (priority != null) existing.setPriority(priority);
+        if (dueDate != null) existing.setDueDate(dueDate);
+        if (status != null) existing.setStatus(status);
+
+        return repository.update(existing);
     }
-    
+
+
     public Task getTask(String id) {
         return repository.findById(id);
     }

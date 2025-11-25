@@ -28,8 +28,10 @@ public class TodoApp {
                     handleViewTasks();
                     break;
                 case "3":
-                    running = false;
-                    System.out.println("Exiting...");
+                    handleUpdateTask();
+                    break;
+                case "4":
+                    handleDeleteTask();
                     break;
                 default:
                     System.out.println("Invalid option. Try again.");
@@ -102,11 +104,33 @@ public class TodoApp {
         System.out.print("Choose: ");
         String input = scanner.nextLine().trim();
 
-        if (input.equals("1")) return Priority.LOW;
-        if (input.equals("2")) return Priority.MEDIUM;
-        if (input.equals("3")) return Priority.HIGH;
-        if (input.equals("4")) return Priority.URGENT;
-        return null;
+        return switch (input) {
+            case "1" -> Priority.LOW;
+            case "2" -> Priority.MEDIUM;
+            case "3" -> Priority.HIGH;
+            case "4" -> Priority.URGENT;
+            default -> null;
+        };
+
+    }
+
+    private TaskStatus readStatus() {
+        System.out.println("Choose Status:");
+        System.out.println("1. PENDING");
+        System.out.println("2. IN_PROGRESS");
+        System.out.println("3. COMPLETED");
+        System.out.println("4. CANCELLED");
+        System.out.print("Choose: ");
+
+        String input = scanner.nextLine();
+
+        return switch (input) {
+            case "1" -> TaskStatus.PENDING;
+            case "2" -> TaskStatus.IN_PROGRESS;
+            case "3" -> TaskStatus.COMPLETED;
+            case "4" -> TaskStatus.CANCELLED;
+            default -> null;
+        };
     }
 
     private void displayTask(Task task) {
@@ -123,4 +147,90 @@ public class TodoApp {
             displayTask(task);
         }
     }
+
+    private void handleUpdateTask() {
+        System.out.print("Enter task ID to update: ");
+        String id = scanner.nextLine();
+
+        Task task = service.getTask(id);
+        if (task == null) {
+            System.out.println("Task not found!");
+            return;
+        }
+
+        System.out.println("\nCurrent Task:");
+        displayTask(task);
+
+        System.out.println("Leave field empty to skip updating it.");
+
+        System.out.print("New title: ");
+        String title = scanner.nextLine();
+        if (title.isBlank()) title = null;
+
+        System.out.print("New description: ");
+        String description = scanner.nextLine();
+        if (description.isBlank()) description = null;
+
+        Priority priority = readPriorityOptional();
+
+        LocalDate dueDate = readDateOptional();
+
+        TaskStatus newStatus = readStatusOptional();
+
+        boolean updated = service.updateTask(
+                id,
+                title,
+                description,
+                priority,
+                dueDate,
+                newStatus
+        );
+
+        if (updated)
+            System.out.println("Task updated successfully!");
+        else
+            System.out.println("Update failed.");
+
+    }
+
+    private void handleDeleteTask() {
+        System.out.print("Enter task ID to delete: ");
+        String id = scanner.nextLine();
+
+        boolean removed = service.deleteTask(id);
+        if (removed)
+            System.out.println("Task deleted.");
+        else
+            System.out.println("Task not found.");
+    }
+
+    private LocalDate readDateOptional() {
+        System.out.print("New due date (yyyy-MM-dd) or press Enter to skip: ");
+        String input = scanner.nextLine();
+        if (input.isBlank()) return null;
+
+        try {
+            return LocalDate.parse(input);
+        } catch (DateTimeParseException e) {
+            System.out.println("Wrong date. Skipping update.");
+            return null;
+        }
+    }
+
+    private Priority readPriorityOptional() {
+        System.out.print("New priority (Y or N): ");
+        String input = scanner.nextLine().trim();
+        if (input.equalsIgnoreCase("Y")) return readPriority();
+        else if (input.equalsIgnoreCase("N")) return null;
+        return readPriority();
+    }
+
+    private TaskStatus readStatusOptional() {
+        System.out.print("New status (Y or N): ");
+        String input = scanner.nextLine().trim();
+        if (input.equalsIgnoreCase("Y")) return readStatus();
+        else if (input.equalsIgnoreCase("N")) return null;
+        return readStatus();
+    }
+
 }
