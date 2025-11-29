@@ -1,17 +1,15 @@
 import java.time.LocalDate;
-import java.util.UUID;
 
-public class Task {
+public class Task extends BaseEntity {
 
-    private String id;
     private String title;
     private String description;
     private Priority priority;
     private LocalDate dueDate;
     private TaskStatus status;
-    private LocalDate createdDate;
 
     public Task(String title, String description, Priority priority, LocalDate dueDate) {
+        super();
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
@@ -25,18 +23,13 @@ public class Task {
             throw new IllegalArgumentException("Due date cannot be null");
         }
 
-        this.id = UUID.randomUUID().toString();
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.dueDate = dueDate;
         this.status = TaskStatus.PENDING;
-        this.createdDate = LocalDate.now();
     }
 
-    public String getId() {
-        return id;
-    }
 
     public String getTitle() {
         return title;
@@ -94,13 +87,18 @@ public class Task {
     }
 
     @Override
+    public String getDisplayInfo() {
+        return "Task: " + title + " [" + priority + "]";
+    }
+
+    @Override
     public String toString() {
-        return  "\nID: " + id + "\n" +
+        return  "\nID: " + getId() + "\n" +
                 "Title: " + title + "\n" +
                 "Description: " + description + "\n" +
                 "Priority: " + priority + "\n" +
                 "DueDate: " + dueDate + "\n" +
                 "Status:" + status + "\n" +
-                "CreatedDate: " + createdDate;
+                "CreatedDate: " + getCreatedDate();
     }
 }

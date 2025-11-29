@@ -33,6 +33,19 @@ public class TodoApp {
                 case "4":
                     handleDeleteTask();
                     break;
+                case "5":
+                    handleSearchTasks();
+                    break;
+                case "6":
+                    handleFilterTasks();
+                    break;
+                case "7":
+                    handleStatistics();
+                    break;
+                case "8":
+                    System.out.println("Goodbye!");
+                    running = false;
+                    break;
                 default:
                     System.out.println("Invalid option. Try again.");
                     break;
@@ -231,6 +244,70 @@ public class TodoApp {
         if (input.equalsIgnoreCase("Y")) return readStatus();
         else if (input.equalsIgnoreCase("N")) return null;
         return readStatus();
+    }
+
+    private void handleSearchTasks() {
+        System.out.print("Enter search term (title or description): ");
+        String searchTerm = scanner.nextLine().trim();
+
+        if (searchTerm.isEmpty()) {
+            System.out.println("Search term cannot be empty.");
+            return;
+        }
+
+        List<Task> allTasks = service.getAllTasks();
+        List<Task> searchResults = allTasks.stream()
+            .filter(task -> task.getTitle().toLowerCase().contains(searchTerm.toLowerCase()) ||
+                           task.getDescription().toLowerCase().contains(searchTerm.toLowerCase()))
+            .toList();
+
+        System.out.println("\nSearch results for: " + searchTerm);
+        displayTasks(searchResults);
+    }
+
+    private void handleFilterTasks() {
+        System.out.println("\nFilter Options:");
+        System.out.println("1. Filter by Priority");
+        System.out.println("2. Filter by Status");
+        System.out.print("Choose filter type: ");
+
+        String choice = scanner.nextLine().trim();
+        List<Task> filteredTasks;
+        ITaskFilter filter = null;
+
+        switch (choice) {
+            case "1":
+                Priority priority = readPriority();
+                if (priority != null) {
+                    filter = new PriorityFilter(priority);
+                    filteredTasks = service.applyFilter(filter);
+                    System.out.println("\nTasks with priority " + priority + ":");
+                    displayTasks(filteredTasks);
+                } else {
+                    System.out.println("Invalid priority selected.");
+                }
+                break;
+            case "2":
+                TaskStatus status = readStatus();
+                if (status != null) {
+                    filter = new StatusFilter(status);
+                    filteredTasks = service.applyFilter(filter);
+                    System.out.println("\nTasks with status " + status + ":");
+                    displayTasks(filteredTasks);
+                } else {
+                    System.out.println("Invalid status selected.");
+                }
+                break;
+            default:
+                System.out.println("Invalid filter option.");
+                break;
+        }
+    }
+
+    private void handleStatistics() {
+        String stats = service.getStatistics();
+        System.out.println("\n=== TASK STATISTICS ===");
+        System.out.println(stats);
     }
 
 }

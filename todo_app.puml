@@ -18,17 +18,26 @@ enum TaskStatus {
   CANCELLED
 }
 
+abstract class BaseEntity {
+  # id: String
+  # createdDate: LocalDate
+  --
+  + BaseEntity()
+  + getId(): String
+  + getCreatedDate(): LocalDate
+  + {abstract} getDisplayInfo(): String
+  + equals(obj: Object): boolean
+  + hashCode(): int
+}
+
 class Task {
-  - id: String
   - title: String
   - description: String
   - priority: Priority
   - dueDate: LocalDate
   - status: TaskStatus
-  - createdDate: LocalDate
   --
   + Task(title, description, priority, dueDate)
-  + getId(): String
   + getTitle(): String
   + setTitle(title: String): void
   + getDescription(): String
@@ -39,10 +48,11 @@ class Task {
   + setDueDate(dueDate: LocalDate): void
   + getStatus(): TaskStatus
   + setStatus(status: TaskStatus): void
+  + getDisplayInfo(): String
   + toString(): String
-  
 }
 
+BaseEntity <|-- Task : extends
 Task *-- Priority
 Task *-- TaskStatus
 
@@ -97,7 +107,7 @@ class TaskService {
   + TaskService(repository: ITaskRepository)
   + createTask(title, desc, priority, dueDate): Task
   + deleteTask(id: String): boolean
-  + updateTask(task: Task): boolean
+  + updateTask(id, title, desc, priority, dueDate, status): boolean
   + getTask(id: String): Task
   + getAllTasks(): List<Task>
   + filterByStatus(status: TaskStatus): List<Task>
@@ -106,8 +116,9 @@ class TaskService {
   + getStatistics(): String
 }
 
-TaskService --> ITaskRepository
-TaskService --> Task
+TaskService --> ITaskRepository : uses
+TaskService --> Task : manages
+TaskService --> ITaskFilter : uses polymorphically
 
 
 
@@ -128,9 +139,14 @@ class TodoApp {
   - handleStatistics(): void
   - displayTask(task: Task): void
   - displayTasks(tasks: List<Task>): void
+  - readPriority(): Priority
+  - readStatus(): TaskStatus
+  - readDate(): LocalDate
 }
 
-TodoApp --> TaskService
+TodoApp --> TaskService : delegates to
+TodoApp --> PriorityFilter : creates polymorphically
+TodoApp --> StatusFilter : creates polymorphically
 
 
 class Main {
@@ -141,5 +157,12 @@ Main --> TaskRepository : creates
 Main --> TaskService : creates
 Main --> TodoApp : creates
 
+note top of BaseEntity : **INHERITANCE**\nTask extends BaseEntity\ndemonstrating class inheritance
+
+note top of ITaskFilter : **ABSTRACTION**\nInterfaces define contracts\nwithout implementation details
+
+note top of Task : **ENCAPSULATION**\nPrivate fields with\npublic accessors
+
+note bottom of TaskService : **POLYMORPHISM**\napplyFilter() method uses\nITaskFilter interface to work\nwith different filter types\n(PriorityFilter, StatusFilter)
 
 @enduml

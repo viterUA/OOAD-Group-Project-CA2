@@ -76,11 +76,11 @@ public class TaskService {
         }
         return filteredTasks;
     }
-    //Itaskfilter need to be created
-//    public List<Task> applyFilter(ITaskFilter filter) {
-//        List<Task> allTasks = repository.getAll();
-//        return filter.filter(allTasks);
-//    }
+
+    public List<Task> applyFilter(ITaskFilter filter) {
+        List<Task> allTasks = repository.getAll();
+        return filter.filter(allTasks);
+    }
     
     public String getStatistics() {
         List<Task> allTasks = repository.getAll();
