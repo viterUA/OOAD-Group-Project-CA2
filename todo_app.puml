@@ -1,8 +1,7 @@
-@startuml ToDo_Application_Architecture
+@startuml
 skinparam classAttributeIconSize 0
 
 title ToDo Application
-
 
 enum Priority {
   LOW
@@ -18,46 +17,17 @@ enum TaskStatus {
   CANCELLED
 }
 
-abstract class BaseEntity {
-  # id: String
-  # createdDate: LocalDate
-  --
-  + BaseEntity()
-  + getId(): String
-  + getCreatedDate(): LocalDate
-  + {abstract} getDisplayInfo(): String
-  + equals(obj: Object): boolean
-  + hashCode(): int
-}
-
 class Task {
+  - id: String
   - title: String
   - description: String
   - priority: Priority
   - dueDate: LocalDate
   - status: TaskStatus
-  --
-  + Task(title, description, priority, dueDate)
-  + getTitle(): String
-  + setTitle(title: String): void
-  + getDescription(): String
-  + setDescription(description: String): void
-  + getPriority(): Priority
-  + setPriority(priority: Priority): void
-  + getDueDate(): LocalDate
-  + setDueDate(dueDate: LocalDate): void
-  + getStatus(): TaskStatus
-  + setStatus(status: TaskStatus): void
-  + getDisplayInfo(): String
-  + toString(): String
+  - createdDate: LocalDate
 }
 
-BaseEntity <|-- Task : extends
-Task *-- Priority
-Task *-- TaskStatus
-
-
-interface ITaskRepository <<interface>> {
+interface ITaskRepository {
   + add(task: Task): void
   + remove(id: String): boolean
   + update(task: Task): boolean
@@ -67,47 +37,25 @@ interface ITaskRepository <<interface>> {
 
 class TaskRepository {
   - tasks: Map<String, Task>
-  --
-  + TaskRepository()
-  + add(task: Task): void
-  + remove(id: String): boolean
-  + update(task: Task): boolean
-  + findById(id: String): Task
-  + getAll(): List<Task>
 }
 
-ITaskRepository <|.. TaskRepository
-
-
-
-interface ITaskFilter <<interface>> {
+interface ITaskFilter {
   + filter(tasks: List<Task>): List<Task>
 }
 
 class PriorityFilter {
   - priority: Priority
-  --
-  + PriorityFilter(priority: Priority)
-  + filter(tasks: List<Task>): List<Task>
 }
 
 class StatusFilter {
   - status: TaskStatus
-  --
-  + StatusFilter(status: TaskStatus)
-  + filter(tasks: List<Task>): List<Task>
 }
-
-ITaskFilter <|.. PriorityFilter : implements
-ITaskFilter <|.. StatusFilter : implements
 
 class TaskService {
   - repository: ITaskRepository
-  --
-  + TaskService(repository: ITaskRepository)
-  + createTask(title, desc, priority, dueDate): Task
+  + createTask(title: String, description: String, priority: Priority, dueDate: LocalDate): Task
   + deleteTask(id: String): boolean
-  + updateTask(id, title, desc, priority, dueDate, status): boolean
+  + updateTask(id: String, title: String, description: String, priority: Priority, dueDate: LocalDate, status: TaskStatus): boolean
   + getTask(id: String): Task
   + getAllTasks(): List<Task>
   + filterByStatus(status: TaskStatus): List<Task>
@@ -116,53 +64,68 @@ class TaskService {
   + getStatistics(): String
 }
 
-TaskService --> ITaskRepository : uses
-TaskService --> Task : manages
-TaskService --> ITaskFilter : uses polymorphically
+class InputHandler {
+  + readInt(prompt: String): int
+  + readString(prompt: String): String
+  + readDate(prompt: String): LocalDate
+  + readPriority(prompt: String): Priority
+  + readStatus(prompt: String): TaskStatus
+}
 
+class MenuHandler {
+  + showMainMenu(): void
+  + showFilterMenu(): void
+  + showUpdateMenu(): void
+}
 
+class DisplayHandler {
+  + showTask(task: Task): void
+  + showTaskList(tasks: List<Task>): void
+  + showStatistics(stats: String): void
+  + showMessage(message: String): void
+  + showError(error: String): void
+}
 
 class TodoApp {
-  - service: TaskService
-  - scanner: Scanner
-  - running: boolean
-  --
-  + TodoApp(service: TaskService)
-  + start(): void
-  - showMenu(): void
-  - handleAddTask(): void
-  - handleViewTasks(): void
-  - handleUpdateTask(): void
-  - handleDeleteTask(): void
-  - handleSearchTasks(): void
-  - handleFilterTasks(): void
-  - handleStatistics(): void
-  - displayTask(task: Task): void
-  - displayTasks(tasks: List<Task>): void
-  - readPriority(): Priority
-  - readStatus(): TaskStatus
-  - readDate(): LocalDate
+  - taskService: TaskService
+  - inputHandler: InputHandler
+  - menuHandler: MenuHandler
+  - displayHandler: DisplayHandler
+  + run(): void
 }
-
-TodoApp --> TaskService : delegates to
-TodoApp --> PriorityFilter : creates polymorphically
-TodoApp --> StatusFilter : creates polymorphically
-
 
 class Main {
-  + {static} main(args: String[]): void
+  + main(args: String[]): void
 }
 
-Main --> TaskRepository : creates
-Main --> TaskService : creates
-Main --> TodoApp : creates
+Task --> Priority
+Task --> TaskStatus
 
-note top of BaseEntity : **INHERITANCE**\nTask extends BaseEntity\ndemonstrating class inheritance
+ITaskRepository --> Task
 
-note top of ITaskFilter : **ABSTRACTION**\nInterfaces define contracts\nwithout implementation details
+ITaskFilter <|.. PriorityFilter
+ITaskFilter <|.. StatusFilter
+PriorityFilter --> Priority
+StatusFilter --> TaskStatus
+PriorityFilter --> Task
+StatusFilter --> Task
 
-note top of Task : **ENCAPSULATION**\nPrivate fields with\npublic accessors
+TaskService --> ITaskRepository
+TaskService --> Task
+TaskService --> Priority
+TaskService --> TaskStatus
+TaskService ..> ITaskFilter
 
-note bottom of TaskService : **POLYMORPHISM**\napplyFilter() method uses\nITaskFilter interface to work\nwith different filter types\n(PriorityFilter, StatusFilter)
+TodoApp --> TaskService
+TodoApp --> InputHandler
+TodoApp --> MenuHandler
+TodoApp --> DisplayHandler
+
+Main --> TaskRepository
+Main --> TaskService
+Main --> InputHandler
+Main --> MenuHandler
+Main --> DisplayHandler
+Main --> TodoApp
 
 @enduml
