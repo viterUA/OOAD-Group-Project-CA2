@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.*;
 
-
-
+/**
+ * SRP: Concrete persistence for tasks using an in-memory collection.
+ * DIP + LSP: Implements ITaskRepository so it can be substituted without changing TaskService.
+ */
 public class TaskRepository implements ITaskRepository {
     
     private Map<String, Task> tasks;

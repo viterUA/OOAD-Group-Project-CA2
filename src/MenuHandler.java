@@ -1,3 +1,7 @@
+/**
+ * SRP: Responsible only for showing menus and options to the user.
+ * Abstraction: Isolates menu text from business and input logic.
+ */
 public class MenuHandler {
 
     public void showMainMenu() {

@@ -1,5 +1,9 @@
 import java.util.List;
 
+/**
+ * SRP: Handles output and formatting concerns only (no business logic).
+ * Encapsulation: Central place for how tasks and messages are presented to the user.
+ */
 public class DisplayHandler {
 
     public void displayTask(Task task) {

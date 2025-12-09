@@ -2,6 +2,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
+/**
+ * SRP: Reads and validates all user input from the console.
+ * Encapsulation: Hides low-level input details from the rest of the application.
+ */
 public class InputHandler {
     private final Scanner scanner;
 

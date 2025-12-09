@@ -2,6 +2,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * SRP: Contains task-related business logic only, no UI or persistence details.
+ * DIP + OCP: Works with ITaskRepository and ITaskFilter abstractions so new implementations can be plugged in.
+ * Encapsulation: Hides how tasks are managed and filtered from the rest of the application.
+ */
 public class TaskService {
     
     private ITaskRepository repository;
@@ -77,6 +82,10 @@ public class TaskService {
         return filteredTasks;
     }
 
+    /**
+     * OCP + Polymorphism: Applies any ITaskFilter implementation to the current tasks.
+     * DIP: Depends on ITaskFilter abstraction so new filters can be introduced without changing this method.
+     */
     public List<Task> applyFilter(ITaskFilter filter) {
         List<Task> allTasks = repository.getAll();
         return filter.filter(allTasks);

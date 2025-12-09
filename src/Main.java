@@ -1,6 +1,10 @@
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Composition Root + DIP: Wires concrete implementations of repositories, services and handlers together.
+ * SRP: Defines application entry point and startup configuration only.
+ */
 public class Main {
     public static void main(String[] args) {
 

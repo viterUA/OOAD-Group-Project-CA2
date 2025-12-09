@@ -2,6 +2,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * SRP: Coordinates overall application flow and delegates work to handlers and TaskService.
+ * Abstraction + Encapsulation: Uses high-level interfaces/services rather than dealing with low-level details.
+ * OOP: Collaborates with other objects through their public APIs, not their internals.
+ */
 public class TodoApp {
 
     private final TaskService service;

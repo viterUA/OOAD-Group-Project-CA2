@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SRP: Filters tasks by priority only.
+ * OCP + Polymorphism: New filters can be added without changing clients, as they all implement ITaskFilter.
+ */
 public class PriorityFilter implements ITaskFilter {
 
     private Priority priority;

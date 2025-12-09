@@ -1,5 +1,9 @@
 import java.util.List;
 
+/**
+ * Abstraction + DIP: Contract for storing and retrieving tasks; high-level code depends on this interface.
+ * LSP: Any concrete repository can substitute this interface as long as it respects the contract.
+ */
 public interface ITaskRepository {
     
     void add(Task task);

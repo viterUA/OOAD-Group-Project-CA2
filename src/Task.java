@@ -1,5 +1,10 @@
 import java.time.LocalDate;
 
+/**
+ * SRP + Encapsulation: Represents a single task with its own data and validation logic only.
+ * Inheritance: Extends BaseEntity to reuse common id/createdDate fields.
+ * Abstraction: Exposes state via getters/setters instead of public fields.
+ */
 public class Task extends BaseEntity {
 
     private String title;

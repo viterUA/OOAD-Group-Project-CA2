@@ -1,6 +1,10 @@
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Inheritance + Abstraction: Base class for entities that need an id and createdDate.
+ * Encapsulation: Provides common state and accessors shared by subclasses like Task.
+ */
 public abstract class BaseEntity {
 
     protected String id;

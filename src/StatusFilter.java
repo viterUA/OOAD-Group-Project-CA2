@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SRP: Filters tasks by status only.
+ * OCP + Polymorphism: Extends behavior via ITaskFilter without modifying existing code.
+ */
 public class StatusFilter implements ITaskFilter {
 
     private TaskStatus status;
