@@ -1,5 +1,5 @@
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Inheritance + Abstraction: Base class for entities that need an id and createdDate.
@@ -7,11 +7,13 @@ import java.util.UUID;
  */
 public abstract class BaseEntity {
 
+    private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
+
     protected String id;
     protected LocalDate createdDate;
 
     public BaseEntity() {
-        this.id = UUID.randomUUID().toString();
+        this.id = String.valueOf(NEXT_ID.getAndIncrement());
         this.createdDate = LocalDate.now();
     }
 
